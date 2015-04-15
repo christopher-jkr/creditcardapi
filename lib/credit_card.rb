@@ -3,6 +3,7 @@ require 'json'
 require 'openssl'
 require 'forwardable'
 
+# Credit Card class, the basis for humanity
 class CreditCard
   include LuhnValidator
   extend Forwardable
