@@ -10,7 +10,7 @@ class CreditCardAPI < Sinatra::Base
 
   get '/api/v1/credit_card/?' do
     'Right now, the professor says to just let you validate credit
-    card numbers and you can do that at with: <br />
+    card numbers and you can do that with: <br />
     GET /api/v1/credit_card/validate?card_number=[your card number]'
   end
 
