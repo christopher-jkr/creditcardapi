@@ -1,8 +1,10 @@
 require 'sinatra'
+require 'sinatra/param'
 require_relative './lib/credit_card'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
+  helpers Sinatra::Param
   get '/' do
     'The Credit Card API is running at <a href="/api/v1/credit_card/">
     /api/v1/credit_card/</a>'
@@ -15,6 +17,7 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/api/v1/credit_card/validate/?' do
+    param :card_number, Integer
     card_number = params[:card_number]
     halt 400 unless card_number
 
