@@ -22,7 +22,7 @@ class CreditCardAPI < Sinatra::Base
     halt 400 unless card_number
 
     card = CreditCard.new(card_number, nil, nil, nil)
-    { "card": card_number,
+    { "card": "#{card_number}",
       "validated": card.validate_checksum
     }.to_json
   end
