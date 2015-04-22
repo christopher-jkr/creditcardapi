@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'sinatra/param'
-require_relative './lib/credit_card'
+require_relative './model/credit_card'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
@@ -25,5 +25,30 @@ class CreditCardAPI < Sinatra::Base
     { "card": "#{card_number}",
       "validated": card.validate_checksum
     }.to_json
+  end
+
+  post '/api/v1/credit_card/?' do
+    details_json = JSON.parse(request.body.read)
+
+    begin
+      number = details_json['number']
+      owner = details_json['owner']
+      credit_network = details_json['credit_network']
+      expiration_date = details_json['expiration_date']
+      card = CreditCard.new(number: number, expiration_date: expiration_date,
+                            credit_network: credit_network, owner: owner)
+      halt 400 unless card.validate_checksum
+      status 201 if card.save
+    rescue
+      halt 410
+    end
+  end
+
+  get '/api/v1/credit_card/all/?' do
+    begin
+      CreditCard.all.map(&:to_s)
+    rescue
+      halt 500
+    end
   end
 end
