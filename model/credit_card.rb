@@ -12,7 +12,7 @@ class CreditCard < ActiveRecord::Base
 
   # instance variables with automatic getter/setter methods
   # attr_accessor :number, :expiration_date, :owner, :credit_network
-  #
+
   # def initialize(number, expiration_date, owner, credit_network)
   #   @number = number
   #   @expiration_date = expiration_date
