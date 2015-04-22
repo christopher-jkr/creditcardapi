@@ -26,4 +26,20 @@ class CreditCardAPI < Sinatra::Base
       "validated": card.validate_checksum
     }.to_json
   end
+
+  post '/api/v1/credit_card/?' do
+    details_json = JSON.parse(request.body.read)
+
+    begin
+      number = details_json['number']
+      owner = details_json['owner']
+      credit_network = details_json['credit_network']
+      expiration_date = details_json['expiration_date']
+      card = CreditCard.new(number: number, expiration_date: expiration_date,
+                            credit_network: credit_network, owner: owner)
+      status 201 if card.save
+    rescue
+      halt 410
+    end
+  end
 end
