@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'sinatra/param'
-require_relative './lib/credit_card'
+require_relative './model/credit_card'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
