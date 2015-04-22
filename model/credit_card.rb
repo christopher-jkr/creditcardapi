@@ -21,16 +21,19 @@ class CreditCard < ActiveRecord::Base
   # end
 
   # returns json string
-  def to_json
-    {
-      number: @number, expiration_date: @expiration_date, owner: @owner,
-      credit_number: @credit_number
-    }.to_json
-  end
+  # def to_json
+  #   {
+  #     number: @number, expiration_date: @expiration_date, owner: @owner,
+  #     credit_number: @credit_number
+  #   }.to_json
+  # end
 
   # returns all card information as single string
   def to_s
-    to_json
+    {
+      number: number, owner: owner, expiration_date: expiration_date,
+      credit_network: credit_network
+    }.to_json
   end
 
   # return a new CreditCard object given a serialized (JSON) representation

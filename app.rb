@@ -37,9 +37,18 @@ class CreditCardAPI < Sinatra::Base
       expiration_date = details_json['expiration_date']
       card = CreditCard.new(number: number, expiration_date: expiration_date,
                             credit_network: credit_network, owner: owner)
+      halt 410 unless card.validate_checksum
       status 201 if card.save
     rescue
       halt 410
+    end
+  end
+
+  get '/api/v1/credit_card/all/?' do
+    begin
+      CreditCard.all.map(&:to_s)
+    rescue
+      halt 500
     end
   end
 end
