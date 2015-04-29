@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 20150422114618) do
     t.string "expiration_date"
     t.string "owner"
     t.string "credit_network"
-    t.string "nonce"
+    t.string "nonce_64"
     t.text   "encrypted_number"
   end
 

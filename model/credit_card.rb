@@ -5,6 +5,7 @@ require 'json'
 require 'openssl'
 require 'forwardable'
 require 'rbnacl/libsodium'
+require 'base64'
 
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
@@ -15,26 +16,17 @@ class CreditCard < ActiveRecord::Base
     ENV['DB_KEY'].dup.force_encoding Encoding::BINARY
   end
 
-  def number=(card_number)
+  def number=(params)
     enc = RbNaCl::SecretBox.new(key)
-    self.nonce = RbNaCl::Random.random_bytes(enc.nonce_bytes)
-    self.encrypted_number = enc.encrypt(nonce, card_number)
+    nonce = RbNaCl::Random.random_bytes(enc.nonce_bytes)
+    self.nonce_64 = Base64.encode64(nonce)
+    self.encrypted_number = Base64.encode64(enc.encrypt(nonce, "#{params}"))
   end
 
   def number
     dec = RbNaCl::SecretBox.new(key)
-    dec.decrypt(nonce, encrypted_number)
+    dec.decrypt(Base64.decode64(nonce_64), Base64.decode64(encrypted_number))
   end
-
-  # instance variables with automatic getter/setter methods
-  # attr_accessor :number, :expiration_date, :owner, :credit_network
-
-  # def initialize(number, expiration_date, owner, credit_network)
-  #   @number = number
-  #   @expiration_date = expiration_date
-  #   @owner = owner
-  #   @credit_network = credit_network
-  # end
 
   # returns json string
   # def to_json

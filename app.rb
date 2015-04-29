@@ -1,11 +1,14 @@
 require 'sinatra'
 require 'sinatra/param'
 require_relative './model/credit_card'
+require 'config_env'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
   configure :development, :test do
+    require 'hirb'
     ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
+    Hirb.enable
   end
 
   helpers Sinatra::Param
@@ -28,7 +31,7 @@ class CreditCardAPI < Sinatra::Base
                           expiration_date: 'ali', credit_network: 'ali',
                           owner: 'ali')
 
-    { "card": "#{params[:card_number]}",
+    { "card": "#{card.number}",
       "validated": card.validate_checksum
     }.to_json
   end
@@ -37,7 +40,8 @@ class CreditCardAPI < Sinatra::Base
     details_json = JSON.parse(request.body.read)
 
     begin
-      card = CreditCard.new(number: ['number = ?', "#{details_json['number']}"],
+      card = CreditCard.new(number: ['number = ?',
+                                     "#{details_json['number']}"].to_json,
                             expiration_date: ['expiration_date = ?',
                                               "#{
                                               details_json['expiration_date']}"
