@@ -7,6 +7,7 @@ gem 'json'
 gem 'sinatra-param'
 gem 'rake'
 gem 'config_env'
+gem 'rbnacl-libsodium'
 
 gem 'activerecord'
 gem 'sinatra-activerecord'
