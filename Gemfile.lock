@@ -17,6 +17,7 @@ GEM
     arel (6.0.0)
     bond (0.5.1)
     builder (3.2.2)
+    config_env (0.1.0)
     daemons (1.2.2)
     eventmachine (1.0.7)
     i18n (0.7.0)
@@ -65,6 +66,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  config_env
   json
   rake
   sinatra

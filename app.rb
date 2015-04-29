@@ -4,6 +4,10 @@ require_relative './model/credit_card'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
+  configure :development, :test do
+    ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
+  end
+
   helpers Sinatra::Param
   get '/' do
     'The Credit Card API is running at <a href="/api/v1/credit_card/">
