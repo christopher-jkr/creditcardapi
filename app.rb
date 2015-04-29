@@ -31,7 +31,7 @@ class CreditCardAPI < Sinatra::Base
                           expiration_date: 'ali', credit_network: 'ali',
                           owner: 'ali')
 
-    { "card": "#{card.number}",
+    { "card": card.number,
       "validated": card.validate_checksum
     }.to_json
   end

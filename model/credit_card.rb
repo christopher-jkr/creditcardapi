@@ -16,6 +16,10 @@ class CreditCard < ActiveRecord::Base
     ENV['DB_KEY'].dup.force_encoding Encoding::BINARY
   end
 
+  def getter(item)
+    JSON.parse(item)[1]
+  end
+
   def number=(params)
     enc = RbNaCl::SecretBox.new(key)
     nonce = RbNaCl::Random.random_bytes(enc.nonce_bytes)
@@ -25,7 +29,9 @@ class CreditCard < ActiveRecord::Base
 
   def number
     dec = RbNaCl::SecretBox.new(key)
-    dec.decrypt(Base64.decode64(nonce_64), Base64.decode64(encrypted_number))
+    getter(
+      dec.decrypt(Base64.decode64(nonce_64), Base64.decode64(encrypted_number))
+    )
   end
 
   # returns json string
@@ -39,8 +45,10 @@ class CreditCard < ActiveRecord::Base
   # returns all card information as single string
   def to_s
     {
-      number: number, owner: owner, expiration_date: expiration_date,
-      credit_network: credit_network
+      number: number,
+      owner: getter(owner),
+      expiration_date: getter(expiration_date),
+      credit_network: getter(credit_network)
     }.to_json
   end
 
