@@ -40,8 +40,7 @@ class CreditCardAPI < Sinatra::Base
     details_json = JSON.parse(request.body.read)
 
     begin
-      card = CreditCard.new(number: ['number = ?',
-                                     "#{details_json['number']}"].to_json,
+      card = CreditCard.new(number: ['number = ?', "#{details_json['number']}"],
                             expiration_date: ['expiration_date = ?',
                                               "#{
                                               details_json['expiration_date']}"
