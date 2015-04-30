@@ -27,7 +27,7 @@ class CreditCardAPI < Sinatra::Base
     param :card_number, Integer
     halt 400 unless params[:card_number]
 
-    card = CreditCard.new(number: ['number = ?', "#{params[:card_number]}"])
+    card = CreditCard.new(number: "#{params[:card_number]}")
 
     { "card": card.number,
       "validated": card.validate_checksum
@@ -38,15 +38,11 @@ class CreditCardAPI < Sinatra::Base
     details_json = JSON.parse(request.body.read)
 
     begin
-      card = CreditCard.new(number: ['number = ?', "#{details_json['number']}"],
-                            expiration_date: ['expiration_date = ?',
-                                              "#{
-                                              details_json['expiration_date']}"
-                                             ],
-                            credit_network: ['credit_network = ?',
-                                             "#{details_json['credit_network']}"
-                                            ],
-                            owner: ['owner = ?', "#{details_json['owner']}"])
+      card = CreditCard.new(number: "#{details_json['number']}",
+                            expiration_date:
+                            "#{details_json['expiration_date']}",
+                            credit_network: "#{details_json['credit_network']}",
+                            owner: "#{details_json['owner']}")
       halt 400 unless card.validate_checksum
       status 201 if card.save
     rescue
