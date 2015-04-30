@@ -4,21 +4,37 @@ require_relative '../lib/luhn_validator.rb'
 require 'json'
 require 'openssl'
 require 'forwardable'
+require 'rbnacl/libsodium'
+require 'base64'
+
+# TODO: Attempt to nullify mass assignment vulnerability ActiveRecord new
 
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
   include LuhnValidator
   extend Forwardable
 
-  # instance variables with automatic getter/setter methods
-  # attr_accessor :number, :expiration_date, :owner, :credit_network
+  def key
+    ENV['DB_KEY'].dup.force_encoding Encoding::BINARY
+  end
 
-  # def initialize(number, expiration_date, owner, credit_network)
-  #   @number = number
-  #   @expiration_date = expiration_date
-  #   @owner = owner
-  #   @credit_network = credit_network
+  # def getter(item)
+  #   JSON.parse(item)[1]
   # end
+
+  def number=(params)
+    enc = RbNaCl::SecretBox.new(key)
+    nonce = RbNaCl::Random.random_bytes(enc.nonce_bytes)
+    self.nonce_64 = Base64.encode64(nonce)
+    self.encrypted_number = Base64.encode64(enc.encrypt(nonce, "#{params}"))
+  end
+
+  def number
+    dec = RbNaCl::SecretBox.new(key)
+    # getter(
+    dec.decrypt(Base64.decode64(nonce_64), Base64.decode64(encrypted_number))
+    # )
+  end
 
   # returns json string
   # def to_json
@@ -31,7 +47,9 @@ class CreditCard < ActiveRecord::Base
   # returns all card information as single string
   def to_s
     {
-      number: number, owner: owner, expiration_date: expiration_date,
+      number: number,
+      owner: owner,
+      expiration_date: expiration_date,
       credit_network: credit_network
     }.to_json
   end
@@ -47,6 +65,6 @@ class CreditCard < ActiveRecord::Base
   # return a cryptographically secure hash
   def hash_secure
     sha256 = OpenSSL::Digest::SHA256.new
-    sha256.digest(to_s).unpack('H*')[0]
+    Base64.encode64(sha256.digest)
   end
 end
