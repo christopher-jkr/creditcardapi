@@ -27,9 +27,7 @@ class CreditCardAPI < Sinatra::Base
     param :card_number, Integer
     halt 400 unless params[:card_number]
 
-    card = CreditCard.new(number: ['number = ?', "#{params[:card_number]}"],
-                          expiration_date: 'ali', credit_network: 'ali',
-                          owner: 'ali')
+    card = CreditCard.new(number: ['number = ?', "#{params[:card_number]}"])
 
     { "card": card.number,
       "validated": card.validate_checksum
