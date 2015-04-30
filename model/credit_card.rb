@@ -7,6 +7,8 @@ require 'forwardable'
 require 'rbnacl/libsodium'
 require 'base64'
 
+# TODO: Attempt to nullify mass assignment vulnerability ActiveRecord new
+
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
   include LuhnValidator
