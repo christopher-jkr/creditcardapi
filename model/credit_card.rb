@@ -63,6 +63,6 @@ class CreditCard < ActiveRecord::Base
   # return a cryptographically secure hash
   def hash_secure
     sha256 = OpenSSL::Digest::SHA256.new
-    sha256.digest(to_s).unpack('H*')[0]
+    Base64.encode64(sha256.digest)
   end
 end
