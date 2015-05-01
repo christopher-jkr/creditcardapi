@@ -15,7 +15,7 @@ class CreditCard < ActiveRecord::Base
   extend Forwardable
 
   def key
-    ENV['DB_KEY'].dup.force_encoding Encoding::BINARY
+    Base64.decode64(ENV['DB_KEY'])
   end
 
   # def getter(item)
