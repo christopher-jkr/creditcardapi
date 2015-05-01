@@ -1,4 +1,4 @@
-require_relative '../lib/credit_card'
+require_relative '../model/credit_card'
 require 'minitest/autorun'
 require 'yaml'
 

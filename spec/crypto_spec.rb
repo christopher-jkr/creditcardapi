@@ -1,4 +1,4 @@
-require_relative '../lib/credit_card'
+require_relative '../model/credit_card'
 require_relative '../lib/substitution_cipher'
 require_relative '../lib/double_trans_cipher'
 require_relative '../lib/aes_cipher'
