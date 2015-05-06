@@ -1,4 +1,5 @@
 module SubstitutionCipher
+  # Caesar Cipher
   module Caesar
     # Encrypts document using key
     # Arguments:
@@ -30,6 +31,7 @@ module SubstitutionCipher
     end
   end
 
+  # Permutation Cipher
   module Permutation
     # Encrypts document using key
     # Arguments:

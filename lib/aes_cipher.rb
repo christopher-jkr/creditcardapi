@@ -1,6 +1,7 @@
 require 'openssl'
 require 'json'
 
+# AES Cipher
 module AesCipher
   def self.encrypt(document, key)
     document = document.to_s

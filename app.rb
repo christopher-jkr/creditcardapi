@@ -1,9 +1,16 @@
 require 'sinatra'
 require 'sinatra/param'
-require_relative './lib/credit_card'
+require_relative './model/credit_card'
+require 'config_env'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
+  configure :development, :test do
+    require 'hirb'
+    ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
+    Hirb.enable
+  end
+
   helpers Sinatra::Param
   get '/' do
     'The Credit Card API is running at <a href="/api/v1/credit_card/">
@@ -18,12 +25,36 @@ class CreditCardAPI < Sinatra::Base
 
   get '/api/v1/credit_card/validate/?' do
     param :card_number, Integer
-    card_number = params[:card_number]
-    halt 400 unless card_number
+    halt 400 unless params[:card_number]
 
-    card = CreditCard.new(card_number, nil, nil, nil)
-    { "card": "#{card_number}",
+    card = CreditCard.new(number: "#{params[:card_number]}")
+
+    { "card": card.number,
       "validated": card.validate_checksum
     }.to_json
+  end
+
+  post '/api/v1/credit_card/?' do
+    details_json = JSON.parse(request.body.read)
+
+    begin
+      card = CreditCard.new(number: "#{details_json['number']}",
+                            expiration_date:
+                            "#{details_json['expiration_date']}",
+                            credit_network: "#{details_json['credit_network']}",
+                            owner: "#{details_json['owner']}")
+      halt 400 unless card.validate_checksum
+      status 201 if card.save
+    rescue
+      halt 410
+    end
+  end
+
+  get '/api/v1/credit_card/all/?' do
+    begin
+      CreditCard.all.map(&:to_s)
+    rescue
+      halt 500
+    end
   end
 end
