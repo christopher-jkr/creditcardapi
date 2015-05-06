@@ -23,3 +23,7 @@ group :test do
   gem 'rack'
   gem 'rack-test'
 end
+
+group :production do
+  gem 'pg'
+end

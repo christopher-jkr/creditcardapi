@@ -34,9 +34,41 @@ describe 'Credit Card API tests' do
     end
   end
 
-  describe 'Inserting records' do
+  describe 'Insert records' do
+    cards.each do |name, numbers|
+      before do
+        CreditCard.delete_all
+      end
+
+      describe "Inserting valid #{name} records" do
+        numbers['valid'].each do |number|
+          it 'should get in' do
+            req_header = { 'CONTENT_TYPE' => 'application/json' }
+            req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
+                         number: "#{number}", credit_network: "#{name}" }
+            post '/api/v1/credit_card', req_body.to_json, req_header
+            last_response.status.must_equal 201
+          end
+        end
+      end
+
+      describe "Rejecting invalid #{name} records" do
+        numbers['invalid'].each do |number|
+          it 'should get in' do
+            req_header = { 'CONTENT_TYPE' => 'application/json' }
+            req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
+                         number: "#{number}", credit_network: "#{name}" }
+            post '/api/v1/credit_card', req_body.to_json, req_header
+            last_response.status.must_equal 400
+          end
+        end
+      end
+    end
   end
 
-  describe 'Retrieving all records' do
-  end
+  # describe 'Retrieving all records' do
+  #   it 'should retrieve number of records' do
+  #     get '/api/v1/credit_card/all'
+  #   end
+  # end
 end
