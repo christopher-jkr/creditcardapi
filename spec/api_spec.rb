@@ -66,9 +66,29 @@ describe 'Credit Card API tests' do
     end
   end
 
-  # describe 'Retrieving all records' do
-  #   it 'should retrieve number of records' do
-  #     get '/api/v1/credit_card/all'
-  #   end
-  # end
+  describe 'Retrieving all records' do
+    before do
+      CreditCard.delete_all
+    end
+
+    list = []
+    it 'should get in' do
+      cards.each do |name, numbers|
+        numbers['valid'].each do |number|
+          list.push(number)
+          req_header = { 'CONTENT_TYPE' => 'application/json' }
+          req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
+                       number: "#{number}", credit_network: "#{name}" }
+          post '/api/v1/credit_card', req_body.to_json, req_header
+        end
+      end
+      get '/api/v1/credit_card/all'
+      last_response.status.must_equal 200
+      result = last_response.body.gsub('}', '}  ').split('  ')
+      result.length.must_equal 20
+      result.each do |res|
+        list.must_include JSON.parse(res)['number']
+      end
+    end
+  end
 end
