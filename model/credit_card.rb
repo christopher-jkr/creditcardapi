@@ -15,24 +15,22 @@ class CreditCard < ActiveRecord::Base
   extend Forwardable
 
   def key
-    Base64.decode64(ENV['DB_KEY'])
+    Base64.urlsafe_decode64(ENV['DB_KEY'])
   end
-
-  # def getter(item)
-  #   JSON.parse(item)[1]
-  # end
 
   def number=(params)
     enc = RbNaCl::SecretBox.new(key)
     nonce = RbNaCl::Random.random_bytes(enc.nonce_bytes)
-    self.nonce_64 = Base64.encode64(nonce)
-    self.encrypted_number = Base64.encode64(enc.encrypt(nonce, "#{params}"))
+    self.nonce_64 = Base64.urlsafe_encode64(nonce)
+    self.encrypted_number = Base64.urlsafe_encode64(enc.encrypt(
+                                                      nonce, "#{params}"))
   end
 
   def number
     dec = RbNaCl::SecretBox.new(key)
     # getter(
-    dec.decrypt(Base64.decode64(nonce_64), Base64.decode64(encrypted_number))
+    dec.decrypt(Base64.urlsafe_decode64(nonce_64), Base64.urlsafe_decode64(
+                                                     encrypted_number))
     # )
   end
 
@@ -65,6 +63,6 @@ class CreditCard < ActiveRecord::Base
   # return a cryptographically secure hash
   def hash_secure
     sha256 = OpenSSL::Digest::SHA256.new
-    Base64.encode64(sha256.digest)
+    Base64.urlsafe_encode64(sha256.digest)
   end
 end
