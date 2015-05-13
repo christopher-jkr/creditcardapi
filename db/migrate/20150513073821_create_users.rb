@@ -2,9 +2,8 @@
 class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |u|
-      u.string :username, :email, :fullname
-      u.date :dob
-      u.text :hashed_password, :address
+      u.text :hashed_password, :encrytped_address, :encrypted_fullname,
+             :encrypted_dob, :nonce_64, :email, :username
       u.timestamps null: false
     end
   end

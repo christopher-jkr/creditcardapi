@@ -24,14 +24,15 @@ ActiveRecord::Schema.define(version: 20150513073821) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "username"
-    t.string   "email"
-    t.string   "fullname"
-    t.date     "dob"
     t.text     "hashed_password"
-    t.text     "address"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.text     "encrytped_address"
+    t.text     "encrypted_fullname"
+    t.text     "encrypted_dob"
+    t.text     "nonce_64"
+    t.text     "email"
+    t.text     "username"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
 end
