@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/param'
 require_relative './model/credit_card'
+require_relative './model/user'
 require 'config_env'
 
 # Old CLIs now on Web
@@ -50,9 +51,33 @@ class CreditCardAPI < Sinatra::Base
     end
   end
 
+  post '/api/v1/user/?' do
+    details_json = JSON.parse(request.body.read)
+
+    begin
+      user = User.new(username: "#{details_json['username']}",
+                      email: "#{details_json['email']}")
+      user.password = "#{details_json['password']}"
+      user.dob = "#{details_json['dob']}"
+      user.address = "#{details_json['address']}"
+      user.fullname = "#{details_json['fullname']}"
+      status 201 if user.save
+    rescue
+      halt 410
+    end
+  end
+
   get '/api/v1/credit_card/all/?' do
     begin
       CreditCard.all.map(&:to_s)
+    rescue
+      halt 500
+    end
+  end
+
+  get '/api/v1/user/all/?' do
+    begin
+      User.all.map(&:to_s)
     rescue
       halt 500
     end

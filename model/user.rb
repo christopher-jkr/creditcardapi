@@ -3,6 +3,7 @@ require 'protected_attributes'
 require_relative '../environments'
 require 'rbnacl/libsodium'
 require 'base64'
+require 'json'
 
 # User class for application
 class User < ActiveRecord::Base
@@ -14,30 +15,6 @@ class User < ActiveRecord::Base
   validates :encrypted_dob, presence: true
 
   attr_accessible :username, :email
-
-  def dob=(params)
-    self.encrypted_dob = enc64(enc.encrypt(nonce, "#{params}"))
-  end
-
-  def dob
-    enc.decrypt(dec64(nonce), dec64(encrypted_dob))
-  end
-
-  def address=(params)
-    self.encrytped_address = enc64(enc.encrypt(nonce, "#{params}"))
-  end
-
-  def address
-    enc.decrypt(dec64(nonce), dec64(encrytped_address))
-  end
-
-  def fullname=(params)
-    self.encrypted_fullname = enc64(enc.encrypt(nonce, "#{params}"))
-  end
-
-  def fullname
-    enc.decrypt(dec64(nonce), dec64(encrypted_fullname))
-  end
 
   def key
     dec64(ENV['DB_KEY'])
@@ -51,8 +28,40 @@ class User < ActiveRecord::Base
     Base64.urlsafe_decode64(value)
   end
 
-  self.enc = RbNaCl::SecretBox.new(key)
-  self.nonce = enc64(RbNaCl::Random.random_bytes(enc.nonce_bytes))
+  def enc
+    enc = RbNaCl::SecretBox.new(key)
+    @nonce = enc64(RbNaCl::Random.random_bytes(enc.nonce_bytes)) unless @nonce
+    self.nonce = @nonce
+    enc
+  end
+
+  def dec
+    RbNaCl::SecretBox.new(key)
+  end
+
+  def dob=(params)
+    self.encrypted_dob = enc64(enc.encrypt(dec64(nonce), "#{params}"))
+  end
+
+  def dob
+    dec.decrypt(dec64(nonce), dec64(encrypted_dob))
+  end
+
+  def address=(params)
+    self.encrytped_address = enc64(enc.encrypt(dec64(nonce), "#{params}"))
+  end
+
+  def address
+    dec.decrypt(dec64(nonce), dec64(encrytped_address))
+  end
+
+  def fullname=(params)
+    self.encrypted_fullname = enc64(enc.encrypt(dec64(nonce), "#{params}"))
+  end
+
+  def fullname
+    dec.decrypt(dec64(nonce), dec64(encrypted_fullname))
+  end
 
   def password=(new_password)
     salt = RbNaCl::Random.random_bytes(RbNaCl::PasswordHash::SCrypt::SALTBYTES)
@@ -76,5 +85,17 @@ class User < ActiveRecord::Base
     opslimit = 2**20
     memlimit = 2**24
     RbNaCl::PasswordHash.scrypt(pwd, salt, opslimit, memlimit)
+  end
+
+  # returns all user information as single string
+  def to_s
+    {
+      fullname: fullname,
+      address: address,
+      # password: password,
+      dob: dob,
+      email: email,
+      username: username
+    }.to_json
   end
 end
