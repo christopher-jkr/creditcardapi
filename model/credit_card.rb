@@ -28,19 +28,9 @@ class CreditCard < ActiveRecord::Base
 
   def number
     dec = RbNaCl::SecretBox.new(key)
-    # getter(
     dec.decrypt(Base64.urlsafe_decode64(nonce_64), Base64.urlsafe_decode64(
                                                      encrypted_number))
-    # )
   end
-
-  # returns json string
-  # def to_json
-  #   {
-  #     number: @number, expiration_date: @expiration_date, owner: @owner,
-  #     credit_number: @credit_number
-  #   }.to_json
-  # end
 
   # returns all card information as single string
   def to_s
