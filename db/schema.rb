@@ -28,9 +28,10 @@ ActiveRecord::Schema.define(version: 20150513073821) do
     t.text     "encrytped_address"
     t.text     "encrypted_fullname"
     t.text     "encrypted_dob"
-    t.text     "nonce_64"
+    t.text     "nonce"
     t.text     "email"
     t.text     "username"
+    t.text     "salt"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
