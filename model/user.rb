@@ -92,7 +92,6 @@ class User < ActiveRecord::Base
     {
       fullname: fullname,
       address: address,
-      # password: password,
       dob: dob,
       email: email,
       username: username

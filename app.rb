@@ -51,6 +51,14 @@ class CreditCardAPI < Sinatra::Base
     end
   end
 
+  get '/api/v1/credit_card/all/?' do
+    begin
+      CreditCard.all.map(&:to_s)
+    rescue
+      halt 500
+    end
+  end
+
   post '/api/v1/user/?' do
     details_json = JSON.parse(request.body.read)
 
@@ -64,14 +72,6 @@ class CreditCardAPI < Sinatra::Base
       status 201 if user.save
     rescue
       halt 410
-    end
-  end
-
-  get '/api/v1/credit_card/all/?' do
-    begin
-      CreditCard.all.map(&:to_s)
-    rescue
-      halt 500
     end
   end
 
