@@ -72,17 +72,21 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/api/v1/credit_card/?' do
-    haml :validate
+    haml :services
   end
 
   get '/api/v1/credit_card/validate/?' do
-    param :card_number, Integer
-    halt 400 unless params[:card_number]
-
-    card = CreditCard.new(number: "#{params[:card_number]}")
-
-    haml :validated, locals: { number: card.number,
-                               validate_checksum: card.validate_checksum }
+    logger.info('VALIDATE')
+    begin
+      param :card_number, Integer
+      fail('Pass a card number') unless params[:card_number]
+      card = CreditCard.new(number: "#{params[:card_number]}")
+      haml :validated, locals: { number: card.number,
+                                 validate_checksum: card.validate_checksum }
+    rescue => e
+      logger.error(e)
+      redirect '/api/v1/credit_card/'
+    end
 
     # { "card": card.number,
     #   "validated": card.validate_checksum
@@ -106,10 +110,6 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/api/v1/credit_card/all/?' do
-    begin
-      CreditCard.all.map(&:to_s)
-    rescue
-      halt 500
-    end
+    haml :all, locals: { result: CreditCard.all.map(&:to_s) }
   end
 end
