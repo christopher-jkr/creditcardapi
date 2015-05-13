@@ -13,11 +13,13 @@ gem 'activerecord'
 gem 'sinatra-activerecord'
 
 gem 'protected_attributes'
+gem 'haml'
 
 group :development, :test do
   gem 'sqlite3'
   gem 'tux'
   gem 'hirb'
+  gem 'shotgun'
 end
 
 group :test do
