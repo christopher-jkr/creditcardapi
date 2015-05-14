@@ -2,11 +2,13 @@ require 'sinatra/activerecord'
 require 'protected_attributes'
 require_relative '../environments'
 require 'rbnacl/libsodium'
-require 'base64'
 require 'json'
+require_relative '../helpers/model_helper'
 
 # User class for application
 class User < ActiveRecord::Base
+  include ModelHelper
+
   validates :username, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true, format: /@/
   validates :hashed_password, presence: true
@@ -15,18 +17,6 @@ class User < ActiveRecord::Base
   validates :encrypted_dob, presence: true
 
   attr_accessible :username, :email
-
-  def key
-    dec64(ENV['DB_KEY'])
-  end
-
-  def enc64(value)
-    Base64.urlsafe_encode64(value)
-  end
-
-  def dec64(value)
-    Base64.urlsafe_decode64(value)
-  end
 
   def enc
     enc = RbNaCl::SecretBox.new(key)

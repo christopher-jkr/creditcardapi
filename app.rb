@@ -3,7 +3,7 @@ require 'sinatra/param'
 require_relative './model/credit_card'
 require_relative './model/user'
 require 'config_env'
-require_relative './helpers/creditcard_helper.rb'
+require_relative './helpers/creditcardapi_helper'
 
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
