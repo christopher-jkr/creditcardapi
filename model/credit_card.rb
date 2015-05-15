@@ -1,35 +1,29 @@
 require 'sinatra/activerecord'
 require_relative '../environments'
-require_relative '../lib/luhn_validator.rb'
+require_relative '../lib/luhn_validator'
 require 'json'
 require 'openssl'
 require 'forwardable'
 require 'rbnacl/libsodium'
-require 'base64'
+require_relative '../helpers/model_helper'
 
 # TODO: Attempt to nullify mass assignment vulnerability ActiveRecord new
 
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
-  include LuhnValidator
+  include ModelHelper, LuhnValidator
   extend Forwardable
-
-  def key
-    Base64.urlsafe_decode64(ENV['DB_KEY'])
-  end
 
   def number=(params)
     enc = RbNaCl::SecretBox.new(key)
     nonce = RbNaCl::Random.random_bytes(enc.nonce_bytes)
-    self.nonce_64 = Base64.urlsafe_encode64(nonce)
-    self.encrypted_number = Base64.urlsafe_encode64(enc.encrypt(
-                                                      nonce, "#{params}"))
+    self.nonce_64 = enc64(nonce)
+    self.encrypted_number = enc64(enc.encrypt(nonce, "#{params}"))
   end
 
   def number
     dec = RbNaCl::SecretBox.new(key)
-    dec.decrypt(Base64.urlsafe_decode64(nonce_64), Base64.urlsafe_decode64(
-                                                     encrypted_number))
+    dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
   end
 
   # returns all card information as single string
@@ -53,6 +47,6 @@ class CreditCard < ActiveRecord::Base
   # return a cryptographically secure hash
   def hash_secure
     sha256 = OpenSSL::Digest::SHA256.new
-    Base64.urlsafe_encode64(sha256.digest)
+    enc64(sha256.digest)
   end
 end
