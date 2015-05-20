@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'rack-flash'
 require 'sinatra/param'
 require_relative './model/credit_card'
 require_relative './model/user'
@@ -18,6 +19,7 @@ class CreditCardAPI < Sinatra::Base
 
   configure do
     use Rack::Session::Cookie, secret: ENV['MSG_KEY']
+    use Rack::Flash, sweep: true
   end
 
   helpers Sinatra::Param
@@ -39,6 +41,7 @@ class CreditCardAPI < Sinatra::Base
 
   get '/logout' do
     session[:auth_token] = nil
+    flash[:notice] = 'You have logged out'
     redirect '/'
   end
 
@@ -47,6 +50,7 @@ class CreditCardAPI < Sinatra::Base
   end
 
   post '/register' do
+    # TODO: Implement flash
     logger.info('REGISTER')
     username = params[:username]
     email = params[:email]

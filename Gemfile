@@ -16,6 +16,7 @@ gem 'protected_attributes'
 gem 'haml'
 
 gem 'jwt'
+gem 'rack-flash3'
 
 group :development, :test do
   gem 'sqlite3'
