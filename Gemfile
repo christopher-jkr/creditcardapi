@@ -18,6 +18,8 @@ gem 'haml'
 gem 'jwt'
 gem 'rack-flash3'
 
+gem 'pony'
+
 group :development, :test do
   gem 'sqlite3'
   gem 'tux'
