@@ -6,16 +6,16 @@ require_relative './model/user'
 require 'config_env'
 require_relative './helpers/creditcardapi_helper'
 
+configure :development, :test do
+  require 'hirb'
+  ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
+  Hirb.enable
+end
+
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
   include CreditCardHelper
   enable :logging
-
-  configure :development, :test do
-    require 'hirb'
-    ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
-    Hirb.enable
-  end
 
   configure do
     use Rack::Session::Cookie, secret: ENV['MSG_KEY']
@@ -67,30 +67,6 @@ class CreditCardAPI < Sinatra::Base
   end
 
   post '/register' do
-    # TODO: Implement flash
-    # logger.info('REGISTER')
-    # username = params[:username]
-    # email = params[:email]
-    # address = params[:address]
-    # dob = params[:dob]
-    # fullname = params[:fullname]
-    # password = params[:password]
-    # password_confirm = params[:password_confirm]
-    # begin
-    #   if password == password_confirm
-    #     new_user = User.new(username: username, email: email)
-    #     new_user.password = password
-    #     new_user.dob = dob
-    #     new_user.address = address
-    #     new_user.fullname = fullname
-    #     new_user.save ? login_user(new_user) : fail('Could not create new user')
-    #   else
-    #     fail 'Passwords do not match'
-    #   end
-    # rescue => e
-    #   logger.error(e)
-    #   redirect '/register'
-    # end
     registration = Registration.new(params)
 
     if (registration.complete?) &&
@@ -132,10 +108,6 @@ class CreditCardAPI < Sinatra::Base
       logger.error(e)
       redirect '/api/v1/credit_card/'
     end
-
-    # { "card": card.number,
-    #   "validated": card.validate_checksum
-    # }.to_json
   end
 
   post '/api/v1/credit_card/?' do
