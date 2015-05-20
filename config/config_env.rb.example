@@ -1,6 +1,9 @@
 # Copy this file to [app]/config/config_env.rb
+# Replace :[ENV_NAME] with environment name
 # Replace [*] with key
+# Duplicate code block using different keys for different environments
 
-config_env do
-  set :DB_KEY, "[database encryption keys]"
+config_env :[ENV_NAME] do
+  set :DB_KEY, "[database encryption keys encoded with base64 urlsafe encoding]"
+  set :MSG_KEY, "[database encryption keys encoded with base64 urlsafe encoding]"
 end

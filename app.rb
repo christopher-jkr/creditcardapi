@@ -8,17 +8,22 @@ require_relative './helpers/creditcardapi_helper'
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
   include CreditCardHelper
-  use Rack::Session::Cookie
   enable :logging
+
   configure :development, :test do
     require 'hirb'
     ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
     Hirb.enable
   end
+
+  configure do
+    use Rack::Session::Cookie, secret: ENV['MSG_KEY']
+  end
+
   helpers Sinatra::Param
 
   before do
-    @current_user = session[:user_id] ? User.find_by_id(session[:user_id]) : nil
+    @current_user = find_user_by_token(session[:auth_token])
   end
 
   get '/login' do
@@ -33,7 +38,7 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/logout' do
-    session[:user_id] = nil
+    session[:auth_token] = nil
     redirect '/'
   end
 

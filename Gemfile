@@ -15,6 +15,8 @@ gem 'sinatra-activerecord'
 gem 'protected_attributes'
 gem 'haml'
 
+gem 'jwt'
+
 group :development, :test do
   gem 'sqlite3'
   gem 'tux'
