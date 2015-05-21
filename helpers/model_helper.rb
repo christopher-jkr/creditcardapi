@@ -1,4 +1,8 @@
 require 'base64'
+require 'rbnacl/libsodium'
+require 'json'
+require 'sinatra/activerecord'
+require_relative '../environments'
 
 # Helper module for Models
 module ModelHelper

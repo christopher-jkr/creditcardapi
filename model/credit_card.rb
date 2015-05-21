@@ -1,10 +1,6 @@
-require 'sinatra/activerecord'
-require_relative '../environments'
 require_relative '../lib/luhn_validator'
-require 'json'
 require 'openssl'
 require 'forwardable'
-require 'rbnacl/libsodium'
 require_relative '../helpers/model_helper'
 
 # TODO: Attempt to nullify mass assignment vulnerability ActiveRecord new

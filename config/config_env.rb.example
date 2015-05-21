@@ -1,6 +1,15 @@
 # Copy this file to [app]/config/config_env.rb
+# Replace :[ENV_NAME] with environment name
 # Replace [*] with key
+# Duplicate 1st code block using different keys for different environments
+
+config_env :[ENV_NAME] do
+  set :DB_KEY, "[database encryption keys encoded with base64 urlsafe encoding]"
+  set :MSG_KEY, "[database encryption keys encoded with base64 urlsafe encoding]"
+end
 
 config_env do
-  set :DB_KEY, "[database encryption keys]"
+  set 'SENDGRID_DOMAIN', "[Registered Sendgrid Domain]"
+  set 'SENDGRID_USERNAME', "[Registered Sendgrid Username]"
+  set 'SENDGRID_PASSWORD', "[Sendgrid Password]"
 end

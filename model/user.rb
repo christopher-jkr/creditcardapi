@@ -1,8 +1,4 @@
-require 'sinatra/activerecord'
 require 'protected_attributes'
-require_relative '../environments'
-require 'rbnacl/libsodium'
-require 'json'
 require_relative '../helpers/model_helper'
 
 # User class for application

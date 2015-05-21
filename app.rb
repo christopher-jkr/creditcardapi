@@ -1,24 +1,31 @@
 require 'sinatra'
+require 'rack-flash'
 require 'sinatra/param'
 require_relative './model/credit_card'
 require_relative './model/user'
 require 'config_env'
 require_relative './helpers/creditcardapi_helper'
 
+configure :development, :test do
+  require 'hirb'
+  ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
+  Hirb.enable
+end
+
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
   include CreditCardHelper
-  use Rack::Session::Cookie
   enable :logging
-  configure :development, :test do
-    require 'hirb'
-    ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
-    Hirb.enable
+
+  configure do
+    use Rack::Session::Cookie, secret: ENV['MSG_KEY']
+    use Rack::Flash, sweep: true
   end
+
   helpers Sinatra::Param
 
   before do
-    @current_user = session[:user_id] ? User.find_by_id(session[:user_id]) : nil
+    @current_user = find_user_by_token(session[:auth_token])
   end
 
   get '/login' do
@@ -29,40 +36,54 @@ class CreditCardAPI < Sinatra::Base
     username = params[:username]
     password = params[:password]
     user = User.authenticate!(username, password)
-    user ? login_user(user) : redirect('/login')
+    if user
+      login_user(user)
+    else
+      flash[:error] = 'Exists, does not this account'
+      redirect '/login'
+    end
   end
 
   get '/logout' do
-    session[:user_id] = nil
+    session[:auth_token] = nil
+    flash[:notice] = 'You have logged out'
     redirect '/'
   end
 
   get '/register' do
-    haml :register
+    if params[:token]
+      token = params[:token]
+      begin
+        create_account_with_enc_token(token)
+        flash[:notice] = 'Welcome! Your account has been created'
+      rescue
+        flash[:error] = 'Your account could not be created. Your link has '\
+        'expired or is invalid'
+      end
+      redirect '/'
+    else
+      haml :register
+    end
   end
 
   post '/register' do
-    logger.info('REGISTER')
-    username = params[:username]
-    email = params[:email]
-    address = params[:address]
-    dob = params[:dob]
-    fullname = params[:fullname]
-    password = params[:password]
-    password_confirm = params[:password_confirm]
-    begin
-      if password == password_confirm
-        new_user = User.new(username: username, email: email)
-        new_user.password = password
-        new_user.dob = dob
-        new_user.address = address
-        new_user.fullname = fullname
-        new_user.save ? login_user(new_user) : fail('Could not create new user')
-      else
-        fail 'Passwords do not match'
+    registration = Registration.new(params)
+
+    if (registration.complete?) &&
+       (params[:password] == params[:password_confirm])
+      begin
+        email_registration_verification(registration)
+        flash[:notice] = 'Verification link sent to your email. Please check '\
+        'your email'
+        redirect '/'
+      rescue => e
+        logger.error "FAIL EMAIL: #{e}"
+        flash[:error] = 'Could not send registration verification link: '\
+        'check email address'
+        redirect '/register'
       end
-    rescue => e
-      logger.error(e)
+    else
+      flash[:error] = 'Please fill in all the fields and ensure passwords match'
       redirect '/register'
     end
   end
@@ -87,10 +108,6 @@ class CreditCardAPI < Sinatra::Base
       logger.error(e)
       redirect '/api/v1/credit_card/'
     end
-
-    # { "card": card.number,
-    #   "validated": card.validate_checksum
-    # }.to_json
   end
 
   post '/api/v1/credit_card/?' do
