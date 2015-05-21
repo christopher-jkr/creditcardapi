@@ -25,13 +25,27 @@ module CreditCardHelper
     attr_accessor :username, :password, :email, :dob, :address, :fullname
 
     def initialize(user_data)
-      @username = user_data[:username] || user_data['username']
-      @password = user_data[:password] || user_data['password']
-      @email = user_data[:email] || user_data['email']
-      @dob = user_data[:dob] || user_data['dob']
-      @address = user_data[:address] || user_data['address']
-      @fullname = user_data[:fullname] || user_data['fullname']
+      # @username = user_data[:username] || user_data['username']
+      # @password = user_data[:password] || user_data['password']
+      # @email = user_data[:email] || user_data['email']
+      # @dob = user_data[:dob] || user_data['dob']
+      # @address = user_data[:address] || user_data['address']
+      # @fullname = user_data[:fullname] || user_data['fullname']
+      user_data.each do |k, _v|
+        instance_variable_set("@#{k}", user_data[k])
+        # if k.class == String
+        #   instance_variable_set("@#{k}", user_data[k])
+        # elsif k.class == Symbol
+        #   instance_variable_set("@#{k}", user_data[k])
+        # end
+      end
     end
+
+    # def determine(user_hash)
+    #   user_hash.each do |k, v|
+    #     instance_variable_set("@#{v}", user_hash[k])
+    #   end
+    # end
 
     def complete?
       list = instance_variables.map { |var| instance_variable_get var }
