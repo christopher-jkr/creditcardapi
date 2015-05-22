@@ -3,8 +3,6 @@ require 'openssl'
 require 'forwardable'
 require_relative '../helpers/model_helper'
 
-# TODO: Attempt to nullify mass assignment vulnerability ActiveRecord new
-
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
   include ModelHelper, LuhnValidator

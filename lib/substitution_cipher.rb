@@ -21,7 +21,6 @@ module SubstitutionCipher
     #   key: Fixnum (integer)
     # Returns: String
     def self.decrypt(document, key)
-      # TODO: decrypt string using caesar cipher
       key %= 127
       document.chars.map do |x|
         a = x.ord - key
