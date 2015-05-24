@@ -116,7 +116,6 @@ module CreditCardHelper
     token = decrypt_message(enc_msg)
     payload = (JWT.decode token, ENV['MSG_KEY']).first
     reg = Registration.new(payload)
-    logger.info(payload)
     create_account_with_registration(reg)
   end
 end
