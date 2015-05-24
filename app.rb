@@ -56,9 +56,9 @@ class CreditCardAPI < Sinatra::Base
       begin
         create_account_with_enc_token(token)
         flash[:notice] = 'Welcome! Your account has been created'
-      # rescue
-      #   flash[:error] = 'Your account could not be created. Your link has '\
-      #   'expired or is invalid'
+      rescue
+        flash[:error] = 'Your account could not be created. Your link has '\
+        'expired or is invalid'
       end
       redirect '/'
     else

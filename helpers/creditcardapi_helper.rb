@@ -53,6 +53,7 @@ module CreditCardHelper
     registration.instance_variables.map do |e|
       payload[e] = registration.instance_variable_get e
     end
+    payload
   end
 
   def repeat_data(registration)
