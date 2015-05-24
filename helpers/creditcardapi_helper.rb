@@ -18,7 +18,7 @@ module CreditCardHelper
     def complete?
       list = instance_variables.map { |var| instance_variable_get var }
       list.all? do |var|
-        var && var.length > 0
+        var && var.strip.length > 0
       end
     end
   end
