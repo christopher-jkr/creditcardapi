@@ -78,8 +78,8 @@ class CreditCardAPI < Sinatra::Base
         redirect '/'
       rescue => e
         logger.error "FAIL EMAIL: #{e}"
-        flash[:error] = 'Could not send registration verification link: '\
-        'check email address'
+        msg = registration_error_msg(e)
+        flash[:error] = "Could not send registration verification link: #{msg}"
         redirect '/register'
       end
     else

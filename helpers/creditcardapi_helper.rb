@@ -39,14 +39,38 @@ module CreditCardHelper
   end
 
   def email_registration_verification(registration)
-    payload = { username: registration.username, email: registration.email,
-                password: registration.password, dob: registration.dob,
-                address: registration.address, fullname: registration.fullname }
+    payload = create_payload(registration)
+    fail repeat_data(registration) unless repeat_data(registration) == ' '
     token = JWT.encode payload, ENV['MSG_KEY'], 'HS256'
     enc_msg = encrypt_message(token)
     Pony.mail(to: registration.email,
               subject: 'Your CreditCardAPI Account is Ready.',
               html_body: registration_email(enc_msg))
+  end
+
+  def create_payload(registration)
+    payload = {}
+    registration.instance_variables.map do |e|
+      payload[e] = registration.instance_variable_get e
+    end
+  end
+
+  def repeat_data(registration)
+    rep_username = 'This username is taken.'
+    rep_email = 'This email is already associated with an account.'
+    rep_username = '' unless User.find_by_username(registration.username)
+    rep_email = '' unless User.find_by_email(registration.email)
+    "#{rep_username} #{rep_email}"
+  end
+
+  def registration_error_msg(e)
+    rep_username = 'This username is taken.'
+    rep_email = 'This email is already associated with an account.'
+    if [rep_username, rep_email].any? { |t| "#{e}".include? t }
+      "#{e}"
+    else
+      'Check email address.'
+    end
   end
 
   def registration_email(enc_msg)
