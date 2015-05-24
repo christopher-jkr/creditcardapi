@@ -51,7 +51,7 @@ module CreditCardHelper
   def create_payload(registration)
     payload = {}
     registration.instance_variables.map do |e|
-      payload[e] = registration.instance_variable_get e
+      payload["#{e}".gsub('@', '')] = registration.instance_variable_get e
     end
     payload
   end
@@ -116,6 +116,7 @@ module CreditCardHelper
     token = decrypt_message(enc_msg)
     payload = (JWT.decode token, ENV['MSG_KEY']).first
     reg = Registration.new(payload)
+    logger.info(payload)
     create_account_with_registration(reg)
   end
 end
