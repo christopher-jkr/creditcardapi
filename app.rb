@@ -122,7 +122,8 @@ class CreditCardAPI < Sinatra::Base
                             owner: "#{details_json['owner']}")
       halt 400 unless card.validate_checksum
       status 201 if card.save
-    rescue
+    rescue => e
+      logger.error(e)
       halt 410
     end
   end
