@@ -56,7 +56,8 @@ class CreditCardAPI < Sinatra::Base
       begin
         create_account_with_enc_token(token)
         flash[:notice] = 'Welcome! Your account has been created'
-      rescue
+      rescue => e
+        logger.error "FAIL Return: #{e}"
         flash[:error] = 'Your account could not be created. Your link has '\
         'expired or is invalid'
       end
@@ -78,8 +79,8 @@ class CreditCardAPI < Sinatra::Base
         redirect '/'
       rescue => e
         logger.error "FAIL EMAIL: #{e}"
-        flash[:error] = 'Could not send registration verification link: '\
-        'check email address'
+        msg = registration_error_msg(e)
+        flash[:error] = "Could not send registration verification link: #{msg}"
         redirect '/register'
       end
     else
@@ -121,7 +122,8 @@ class CreditCardAPI < Sinatra::Base
                             owner: "#{details_json['owner']}")
       halt 400 unless card.validate_checksum
       status 201 if card.save
-    rescue
+    rescue => e
+      logger.error(e)
       halt 410
     end
   end
