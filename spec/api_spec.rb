@@ -5,7 +5,7 @@ describe 'Credit Card API tests' do
   describe 'Getting service root' do
     it 'should return right' do
       get '/'
-      last_response.body.must_include 'is running at'
+      last_response.body.must_include 'up and running'
       last_response.status.must_equal 200
     end
   end
@@ -17,7 +17,7 @@ describe 'Credit Card API tests' do
           get "api/v1/credit_card/validate?card_number=#{number}"
           last_response.status.must_equal 200
           results = JSON.parse(last_response.body)
-          results['validated'].must_equal true
+          results['validate_checksum'].must_equal true
         end
       end
     end
@@ -28,7 +28,7 @@ describe 'Credit Card API tests' do
           get "api/v1/credit_card/validate?card_number=#{number}"
           last_response.status.must_equal 200
           results = JSON.parse(last_response.body)
-          results['validated'].must_equal false
+          results['validate_checksum'].must_equal false
         end
       end
     end

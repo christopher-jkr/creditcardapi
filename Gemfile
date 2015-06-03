@@ -12,25 +12,16 @@ gem 'rbnacl-libsodium'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 
-gem 'protected_attributes'
-gem 'haml'
-
-gem 'jwt'
-gem 'rack-flash3'
-
-gem 'pony'
-gem 'rack-ssl-enforcer'
-
 group :development, :test do
   gem 'sqlite3'
   gem 'tux'
   gem 'hirb'
   gem 'shotgun'
+  gem 'rack'
 end
 
 group :test do
   gem 'minitest'
-  gem 'rack'
   gem 'rack-test'
 end
 
