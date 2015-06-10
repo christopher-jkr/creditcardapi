@@ -32,11 +32,17 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/api/v1/credit_card/?' do
-    'Right now, the professor says to just let you validate credit'\
-    'card numbers and you can do that with:<br>'\
-    'GET api/v1/credit_card/validate?card_number=[your card number]<br><br>'\
-    'Surprisingly enough, you can also view all our credit cards at<br>'\
-    "GET <a href='/api/v1/credit_card/all/'>api/v1/credit_card/all/</a>"
+    if params[:user_id]
+      user_id = params[:user_id]
+      cc = CreditCard.where(user_id: user_id)
+      cc.map(&:to_s)
+    else
+      'Right now, the professor says to just let you validate credit'\
+      'card numbers and you can do that with:<br>'\
+      'GET api/v1/credit_card/validate?card_number=[your card number]<br><br>'\
+      'Surprisingly enough, you can also view all our credit cards at<br>'\
+      "GET <a href='/api/v1/credit_card/all/'>api/v1/credit_card/all/</a>"
+    end
   end
 
   get '/api/v1/credit_card/validate/?' do
