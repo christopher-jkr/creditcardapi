@@ -60,7 +60,8 @@ class CreditCardAPI < Sinatra::Base
                             expiration_date:
                             "#{details_json['expiration_date']}",
                             credit_network: "#{details_json['credit_network']}",
-                            owner: "#{details_json['owner']}")
+                            owner: "#{details_json['owner']}",
+                            user_id: "#{details_json['user_id']}")
       halt 400 unless card.validate_checksum
       status 201 if card.save
     rescue => e

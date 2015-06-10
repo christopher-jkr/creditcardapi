@@ -26,7 +26,8 @@ class CreditCard < ActiveRecord::Base
       number: number,
       owner: owner,
       expiration_date: expiration_date,
-      credit_network: credit_network
+      credit_network: credit_network,
+      user_id: user_id
     }.to_json
   end
 

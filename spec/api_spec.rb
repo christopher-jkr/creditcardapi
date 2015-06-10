@@ -45,7 +45,8 @@ describe 'Credit Card API tests' do
           it 'should get in' do
             req_header = { 'CONTENT_TYPE' => 'application/json' }
             req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
-                         number: "#{number}", credit_network: "#{name}" }
+                         number: "#{number}", credit_network: "#{name}",
+                         user_id: 'what_should_this_be?' }
             post '/api/v1/credit_card', req_body.to_json, req_header
             last_response.status.must_equal 201
           end
@@ -57,7 +58,8 @@ describe 'Credit Card API tests' do
           it 'should get in' do
             req_header = { 'CONTENT_TYPE' => 'application/json' }
             req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
-                         number: "#{number}", credit_network: "#{name}" }
+                         number: "#{number}", credit_network: "#{name}",
+                         user_id: 'what_should_this_be?' }
             post '/api/v1/credit_card', req_body.to_json, req_header
             last_response.status.must_equal 400
           end
@@ -78,7 +80,8 @@ describe 'Credit Card API tests' do
           list.push(number)
           req_header = { 'CONTENT_TYPE' => 'application/json' }
           req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
-                       number: "#{number}", credit_network: "#{name}" }
+                       number: "#{number}", credit_network: "#{name}",
+                       user_id: 'what_should_this_be?' }
           post '/api/v1/credit_card', req_body.to_json, req_header
         end
       end
