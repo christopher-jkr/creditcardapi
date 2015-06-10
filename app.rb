@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/param'
 require_relative './model/credit_card'
 require 'config_env'
+require_relative './helpers/app_helper'
 # require 'rack/ssl-enforcer'
 
 configure :development, :test do
@@ -11,6 +12,7 @@ end
 # Old CLIs now on Web
 class CreditCardAPI < Sinatra::Base
   enable :logging
+  include AppHelper
 
   # configure :production do
   #   use Rack::SslEnforcer
@@ -33,7 +35,8 @@ class CreditCardAPI < Sinatra::Base
 
   get '/api/v1/credit_card/?' do
     if params[:user_id]
-      user_id = params[:user_id]
+      halt 401 unless authenticate_client_from_header(env['HTTP_AUTHORIZATION'])
+      user_id = @user_id
       cc = CreditCard.where(user_id: user_id)
       cc.map(&:to_s)
     else
@@ -48,9 +51,10 @@ class CreditCardAPI < Sinatra::Base
   get '/api/v1/credit_card/validate/?' do
     logger.info('VALIDATE')
     begin
-      param :card_number, Integer
-      fail('Pass a card number') unless params[:card_number]
-      card = CreditCard.new(number: "#{params[:card_number]}")
+      halt 401 unless authenticate_client_from_header(env['HTTP_AUTHORIZATION'])
+      # param :card_number, Integer
+      # fail('Pass a card number') unless params[:card_number]
+      card = CreditCard.new(number: "#{params[:number]}")
       { number: card.number, validate_checksum: card.validate_checksum }.to_json
     rescue => e
       logger.error(e)
@@ -59,6 +63,8 @@ class CreditCardAPI < Sinatra::Base
   end
 
   post '/api/v1/credit_card/?' do
+    content_type :json
+    halt 401 unless authenticate_client_from_header(env['HTTP_AUTHORIZATION'])
     details_json = JSON.parse(request.body.read)
 
     begin
@@ -66,8 +72,8 @@ class CreditCardAPI < Sinatra::Base
                             expiration_date:
                             "#{details_json['expiration_date']}",
                             credit_network: "#{details_json['credit_network']}",
-                            owner: "#{details_json['owner']}",
-                            user_id: "#{details_json['user_id']}")
+                            owner: "#{details_json['owner']}")
+      card.user_id = @user_id
       halt 400 unless card.validate_checksum
       status 201 if card.save
     rescue => e
