@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20150422114618) do
     t.string   "owner"
     t.string   "credit_network"
     t.string   "nonce_64"
+    t.string   "user_id"
     t.text     "encrypted_number"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false

@@ -11,11 +11,13 @@ gem 'rbnacl-libsodium'
 
 gem 'activerecord'
 gem 'sinatra-activerecord'
+gem 'tux'
+gem 'hirb'
+
+gem 'jwt'
 
 group :development, :test do
   gem 'sqlite3'
-  gem 'tux'
-  gem 'hirb'
   gem 'shotgun'
   gem 'rack'
 end
