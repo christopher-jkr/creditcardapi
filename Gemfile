@@ -25,7 +25,6 @@ end
 group :test do
   gem 'minitest'
   gem 'rack-test'
-  gem 'httparty'
 end
 
 group :production do
