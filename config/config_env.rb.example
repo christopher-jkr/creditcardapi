@@ -2,9 +2,12 @@
 # Replace :[ENV_NAME] with environment name
 # Replace [*] with key
 # Duplicate 1st code block using different keys for different environments
+# ENV variable user_jwt is for tests. Get variable from personal profile page of
+# => Client App
 
 config_env :[ENV_NAME] do
   set :DB_KEY, "[database encryption keys encoded with base64 urlsafe encoding]"
   set :MSG_KEY, "[database encryption keys encoded with base64 urlsafe encoding]"
   set :UI_PUBLIC_KEY, "[Web App Private key]"
+  set :user_jwt, "[token]"
 end

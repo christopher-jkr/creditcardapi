@@ -1,3 +1,4 @@
+require 'httparty'
 require_relative './spec_helper'
 cards = YAML.load_file 'spec/test_numbers.yml'
 
@@ -14,7 +15,9 @@ describe 'Credit Card API tests' do
     describe "Test luhn validator on #{name} cards" do
       numbers['valid'].each do |number|
         it 'should return true' do
-          get "api/v1/credit_card/validate?card_number=#{number}"
+          url = "api/v1/credit_card/validate?card_number=#{number}"
+          headers = { 'authorization' => ('Bearer ' + ENV['user_jwt']) }
+          HTTParty.get url, headers: headers
           last_response.status.must_equal 200
           results = JSON.parse(last_response.body)
           results['validate_checksum'].must_equal true
@@ -25,7 +28,9 @@ describe 'Credit Card API tests' do
     describe "Test luhn validator on #{name} cards" do
       numbers['invalid'].each do |number|
         it 'should return false' do
-          get "api/v1/credit_card/validate?card_number=#{number}"
+          url = "api/v1/credit_card/validate?card_number=#{number}"
+          headers = { 'authorization' => ('Bearer ' + ENV['user_jwt']) }
+          HTTParty.get url, headers: headers
           last_response.status.must_equal 200
           results = JSON.parse(last_response.body)
           results['validate_checksum'].must_equal false
