@@ -4,7 +4,7 @@ require_relative './model/credit_card'
 require 'config_env'
 require 'rdiscount'
 require_relative './helpers/app_helper'
-# require 'rack/ssl-enforcer'
+require 'rack/ssl-enforcer'
 
 configure :development, :test do
   ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
@@ -15,10 +15,10 @@ class CreditCardAPI < Sinatra::Base
   enable :logging
   include AppHelper
 
-  # configure :production do
-  #   use Rack::SslEnforcer
-  #   set :session_secret, ENV['MSG_KEY']
-  # end
+  configure :production do
+    use Rack::SslEnforcer
+    set :session_secret, ENV['MSG_KEY']
+  end
 
   configure do
     require 'hirb'
