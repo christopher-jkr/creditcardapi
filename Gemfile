@@ -15,6 +15,7 @@ gem 'tux'
 gem 'hirb'
 
 gem 'jwt'
+gem 'rdiscount'
 
 group :development, :test do
   gem 'sqlite3'

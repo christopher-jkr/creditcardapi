@@ -1,4 +1,5 @@
 # Credit Card API
-So the API for the moment only does simple credit card validation
+Link to API on heroku: [Heroku App](https://appropriate-credit1card2api3.herokuapp.com/)
+Link to Client App on heroku: [Client App](https://o-captain-my-captain.herokuapp.com/)
 
-Link to heroku app: [Heroku App](https://appropriate-credit1card2api3.herokuapp.com/)
+See [API.md](views/API.md) for API use
