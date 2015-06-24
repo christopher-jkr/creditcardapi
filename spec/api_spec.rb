@@ -14,9 +14,8 @@ describe 'Credit Card API tests' do
     describe "Test luhn validator on #{name} cards" do
       numbers['valid'].each do |number|
         it 'should return true' do
-          req_body = "card_number=#{number}"
-          req_header = { 'authorization' => "Bearer #{ENV['USER_JWT']}" }
-          get '/api/v1/credit_card/validate', req_body, req_header
+          header 'authorization', "Bearer #{ENV['USER_JWT']}"
+          get "/api/v1/credit_card/validate?number=#{number}"
           last_response.status.must_equal 200
           results = JSON.parse(last_response.body)
           results['validate_checksum'].must_equal true
@@ -27,9 +26,8 @@ describe 'Credit Card API tests' do
     describe "Test luhn validator on #{name} cards" do
       numbers['invalid'].each do |number|
         it 'should return false' do
-          req_body = "card_number=#{number}"
-          req_header = { 'authorization' => "Bearer #{ENV['USER_JWT']}" }
-          get '/api/v1/credit_card/validate', req_body, req_header
+          header 'authorization', "Bearer #{ENV['USER_JWT']}"
+          get "/api/v1/credit_card/validate?number=#{number}"
           last_response.status.must_equal 200
           results = JSON.parse(last_response.body)
           results['validate_checksum'].must_equal false
@@ -47,7 +45,8 @@ describe 'Credit Card API tests' do
       describe "Inserting valid #{name} records" do
         numbers['valid'].each do |number|
           it 'should get in' do
-            req_header = { 'CONTENT_TYPE' => 'application/json' }
+            req_header = { 'CONTENT_TYPE' => 'application/json',
+                           'HTTP_AUTHORIZATION' => "Bearer #{ENV['USER_JWT']}" }
             req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
                          number: "#{number}", credit_network: "#{name}",
                          user_id: 'what_should_this_be?' }
@@ -60,7 +59,8 @@ describe 'Credit Card API tests' do
       describe "Rejecting invalid #{name} records" do
         numbers['invalid'].each do |number|
           it 'should get in' do
-            req_header = { 'CONTENT_TYPE' => 'application/json' }
+            req_header = { 'CONTENT_TYPE' => 'application/json',
+                           'HTTP_AUTHORIZATION' => "Bearer #{ENV['USER_JWT']}" }
             req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
                          number: "#{number}", credit_network: "#{name}",
                          user_id: 'what_should_this_be?' }
@@ -82,7 +82,8 @@ describe 'Credit Card API tests' do
       cards.each do |name, numbers|
         numbers['valid'].each do |number|
           list.push(number)
-          req_header = { 'CONTENT_TYPE' => 'application/json' }
+          req_header = { 'CONTENT_TYPE' => 'application/json',
+                         'HTTP_AUTHORIZATION' => "Bearer #{ENV['USER_JWT']}" }
           req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
                        number: "#{number}", credit_network: "#{name}",
                        user_id: 'what_should_this_be?' }
