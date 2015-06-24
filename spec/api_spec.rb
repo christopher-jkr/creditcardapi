@@ -72,7 +72,7 @@ describe 'Credit Card API tests' do
     end
   end
 
-  describe 'Retrieving all records' do
+  describe "Retrieving a user's records" do
     before do
       CreditCard.delete_all
     end
@@ -85,12 +85,12 @@ describe 'Credit Card API tests' do
           req_header = { 'CONTENT_TYPE' => 'application/json',
                          'HTTP_AUTHORIZATION' => "Bearer #{ENV['USER_JWT']}" }
           req_body = { expiration_date: '2017-04-19', owner: 'Cheng-Yu Hsu',
-                       number: "#{number}", credit_network: "#{name}",
-                       user_id: 'what_should_this_be?' }
+                       number: "#{number}", credit_network: "#{name}" }
           post '/api/v1/credit_card', req_body.to_json, req_header
         end
       end
-      get '/api/v1/credit_card/all'
+      header 'authorization', "Bearer #{ENV['USER_JWT']}"
+      get '/api/v1/credit_card?user_id=RQST'
       last_response.status.must_equal 200
       result = last_response.body.gsub('}', '}  ').split('  ')
       result.length.must_equal 20
