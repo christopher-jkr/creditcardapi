@@ -15,7 +15,9 @@ gem 'tux'
 gem 'hirb'
 
 gem 'jwt'
+
 gem 'rdiscount'
+gem 'rack-ssl-enforcer'
 
 group :development, :test do
   gem 'sqlite3'
