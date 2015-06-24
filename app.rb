@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/param'
 require_relative './model/credit_card'
 require 'config_env'
+require 'rdiscount'
 require_relative './helpers/app_helper'
 # require 'rack/ssl-enforcer'
 
@@ -40,11 +41,7 @@ class CreditCardAPI < Sinatra::Base
       cc = CreditCard.where(user_id: user_id)
       cc.map(&:to_s)
     else
-      'Right now, the professor says to just let you validate credit'\
-      'card numbers and you can do that with:<br>'\
-      'GET api/v1/credit_card/validate?card_number=[your card number]<br><br>'\
-      'Surprisingly enough, you can also view all our credit cards at<br>'\
-      "GET <a href='/api/v1/credit_card/all/'>api/v1/credit_card/all/</a>"
+      markdown :API
     end
   end
 
@@ -80,9 +77,5 @@ class CreditCardAPI < Sinatra::Base
       logger.error(e)
       halt 410
     end
-  end
-
-  get '/api/v1/credit_card/all/?' do
-    CreditCard.all.map(&:to_s)
   end
 end
