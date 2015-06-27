@@ -30,8 +30,7 @@ class CreditCardAPI < Sinatra::Base
   helpers Sinatra::Param
 
   get '/' do
-    'The Credit Card API is up and running; API available at '\
-    "<a href='/api/v1/credit_card'>api/v1/credit_card</a>"
+    markdown :INDEX
   end
 
   get '/api/v1/credit_card/?' do

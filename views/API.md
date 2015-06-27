@@ -4,7 +4,7 @@
 
 ### Right now, you can do the following:
 * Validate credit card numbers with:
-  * GET api/v1/credit_card/validate?number=[your card number]
+  * GET /api/v1/credit_card/validate?number=[your card number]
 * View all your saved credit cards with:
   * GET /api/v1/credit_card/user_id=RQST/
 * Save a credit card with:
