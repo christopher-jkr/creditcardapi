@@ -17,13 +17,13 @@ class CreditCard < ActiveRecord::Base
 
   def number
     dec = RbNaCl::SecretBox.new(key)
-    dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
+    number = dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
+    (-number.length..-5).to_a.each { |x| number[x] = '*' } if number.length > 4
   end
 
   # returns all card information as single string
   def to_s
     {
-      # user_id: user_id,
       number: number,
       owner: owner,
       expiration_date: expiration_date,
