@@ -26,7 +26,7 @@ class CreditCard < ActiveRecord::Base
   # returns all card information as single string
   def to_s
     {
-      number: number_obfuscate(num),
+      number: number_obfuscate(number),
       owner: owner,
       expiration_date: expiration_date,
       credit_network: credit_network
