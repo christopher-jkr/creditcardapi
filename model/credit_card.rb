@@ -1,5 +1,5 @@
-require_relative '../lib/luhn_validator'
 require 'openssl'
+require_relative '../lib/luhn_validator'
 require_relative '../helpers/model_helper'
 
 # Credit Card class, the basis for humanity
@@ -18,15 +18,15 @@ class CreditCard < ActiveRecord::Base
     dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
   end
 
-  def number_obfuscate
-    (-number.length..-5).to_a.each { |x| number[x] = '*' } if number.length > 4
-    number
+  def number_obfuscate(num)
+    (5..num.length).to_a.each { |x| num[-x] = '*' } if num.length > 4
+    num
   end
 
   # returns all card information as single string
   def to_s
     {
-      number: number_obfuscate,
+      number: number_obfuscate(num),
       owner: owner,
       expiration_date: expiration_date,
       credit_network: credit_network
