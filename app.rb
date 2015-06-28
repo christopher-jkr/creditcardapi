@@ -45,8 +45,8 @@ class CreditCardAPI < Sinatra::Base
       halt 401 unless authenticate_client_from_header(env['HTTP_AUTHORIZATION'])
       user_id = @user_id
       cc = CreditCard.where(user_id: user_id)
-      settings.ops_cache.set(user_id, cc.map(&:to_s))
-      cc.map(&:to_s)
+      settings.ops_cache.set(user_id, cc.map(&:to_s).to_json)
+      cc.map(&:to_s).to_json
     else
       markdown :API
     end
