@@ -5,6 +5,7 @@ require 'config_env'
 require 'rdiscount'
 require_relative './helpers/app_helper'
 require 'rack/ssl-enforcer'
+require 'dalli'
 
 configure :development, :test do
   ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
@@ -23,8 +24,14 @@ class CreditCardAPI < Sinatra::Base
   configure do
     require 'hirb'
     Hirb.enable
-    # use Rack::Session::Cookie, secret: settings.session_secret
-    # use Rack::Session::Cookie, secret: ENV['MSG_KEY']
+
+    set :ops_cache,
+        Dalli::Client.new((ENV['MEMCACHIER_SERVERS'] || '').split(','),
+                          username: ENV['MEMCACHIER_USERNAME'],
+                          password: ENV['MEMCACHIER_PASSWORD'],
+                          socket_timeout: 1.5,
+                          socket_failure_delay: 0.2
+                         )
   end
 
   helpers Sinatra::Param
@@ -38,6 +45,7 @@ class CreditCardAPI < Sinatra::Base
       halt 401 unless authenticate_client_from_header(env['HTTP_AUTHORIZATION'])
       user_id = @user_id
       cc = CreditCard.where(user_id: user_id)
+      settings.ops_cache.set(user_id, cc.map(&:to_s))
       cc.map(&:to_s)
     else
       markdown :API
@@ -71,7 +79,11 @@ class CreditCardAPI < Sinatra::Base
                             owner: "#{details_json['owner']}")
       card.user_id = @user_id
       halt 400 unless card.validate_checksum
-      status 201 if card.save
+      if card.save
+        cc = CreditCard.where(user_id: card.user_id)
+        settings.ops_cache.set(card.user_id, cc.map(&:to_s))
+        status 201
+      end
     rescue => e
       logger.error(e)
       halt 410
