@@ -1,12 +1,10 @@
 require_relative '../lib/luhn_validator'
 require 'openssl'
-require 'forwardable'
 require_relative '../helpers/model_helper'
 
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
   include ModelHelper, LuhnValidator
-  extend Forwardable
 
   def number=(params)
     enc = RbNaCl::SecretBox.new(key)
@@ -39,9 +37,6 @@ class CreditCard < ActiveRecord::Base
   def self.from_s(card_s)
     new(*(JSON.parse(card_s).values))
   end
-
-  # return a hash of the serialized credit card object
-  delegate hash: :to_s
 
   # return a cryptographically secure hash
   def hash_secure
