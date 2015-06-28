@@ -81,7 +81,7 @@ class CreditCardAPI < Sinatra::Base
       halt 400 unless card.validate_checksum
       if card.save
         cc = CreditCard.where(user_id: card.user_id)
-        settings.ops_cache.set(card.user_id, cc.map(&:to_s))
+        settings.ops_cache.set(card.user_id, cc.map(&:to_s).to_json)
         status 201
       end
     rescue => e

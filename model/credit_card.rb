@@ -17,7 +17,10 @@ class CreditCard < ActiveRecord::Base
 
   def number
     dec = RbNaCl::SecretBox.new(key)
-    number = dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
+    dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
+  end
+
+  def number_obfuscate
     (-number.length..-5).to_a.each { |x| number[x] = '*' } if number.length > 4
     number
   end
@@ -25,7 +28,7 @@ class CreditCard < ActiveRecord::Base
   # returns all card information as single string
   def to_s
     {
-      number: number,
+      number: number_obfuscate,
       owner: owner,
       expiration_date: expiration_date,
       credit_network: credit_network
