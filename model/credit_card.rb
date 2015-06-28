@@ -19,6 +19,7 @@ class CreditCard < ActiveRecord::Base
     dec = RbNaCl::SecretBox.new(key)
     number = dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
     (-number.length..-5).to_a.each { |x| number[x] = '*' } if number.length > 4
+    number
   end
 
   # returns all card information as single string
