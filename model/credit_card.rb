@@ -1,12 +1,10 @@
-require_relative '../lib/luhn_validator'
 require 'openssl'
-require 'forwardable'
+require_relative '../lib/luhn_validator'
 require_relative '../helpers/model_helper'
 
 # Credit Card class, the basis for humanity
 class CreditCard < ActiveRecord::Base
   include ModelHelper, LuhnValidator
-  extend Forwardable
 
   def number=(params)
     enc = RbNaCl::SecretBox.new(key)
@@ -20,11 +18,15 @@ class CreditCard < ActiveRecord::Base
     dec.decrypt(dec64(nonce_64), dec64(encrypted_number))
   end
 
+  def number_obfuscate(num)
+    (5..num.length).to_a.each { |x| num[-x] = '*' } if num.length > 4
+    num
+  end
+
   # returns all card information as single string
   def to_s
     {
-      # user_id: user_id,
-      number: number,
+      number: number_obfuscate(number),
       owner: owner,
       expiration_date: expiration_date,
       credit_network: credit_network
@@ -35,9 +37,6 @@ class CreditCard < ActiveRecord::Base
   def self.from_s(card_s)
     new(*(JSON.parse(card_s).values))
   end
-
-  # return a hash of the serialized credit card object
-  delegate hash: :to_s
 
   # return a cryptographically secure hash
   def hash_secure

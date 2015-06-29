@@ -19,6 +19,9 @@ gem 'jwt'
 gem 'rdiscount'
 gem 'rack-ssl-enforcer'
 
+gem 'dalli'
+gem 'activesupport'
+
 group :development, :test do
   gem 'sqlite3'
   gem 'shotgun'

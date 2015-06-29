@@ -92,7 +92,7 @@ describe 'Credit Card API tests' do
       header 'authorization', "Bearer #{ENV['USER_JWT']}"
       get '/api/v1/credit_card?user_id=RQST'
       last_response.status.must_equal 200
-      result = last_response.body.gsub('}', '}  ').split('  ')
+      result = JSON.parse(last_response.body).to_a
       result.length.must_equal 20
       result.each do |res|
         list.must_include JSON.parse(res)['number']
