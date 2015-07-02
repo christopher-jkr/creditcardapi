@@ -94,8 +94,8 @@ describe 'Credit Card API tests' do
       last_response.status.must_equal 200
       result = JSON.parse(last_response.body).to_a
       result.length.must_equal 20
-      result.each do |res|
-        list.must_include JSON.parse(res)['number']
+      result.each_with_index do |res, idx|
+        list[idx].must_include JSON.parse(res)['number'][-4..-1]
       end
     end
   end
