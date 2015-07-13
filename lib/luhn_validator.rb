@@ -10,6 +10,7 @@ module LuhnValidator
   end
 
   def validate_checksum
+    return false if number.to_i == 0
     nums_a = number.to_s.chars.map(&:to_i)
     nums_a.reverse!
     checksum = 0
